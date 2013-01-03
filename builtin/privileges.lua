@@ -26,16 +26,28 @@ function minetest.register_privilege(name, param)
 end
 
 minetest.register_privilege("interact", "Can interact with things and modify the world")
-minetest.register_privilege("teleport", "Can use /teleport command")
-minetest.register_privilege("bring", "Can teleport other players")
-minetest.register_privilege("settime", "Can use /time")
 minetest.register_privilege("privs", "Can modify privileges")
 minetest.register_privilege("basic_privs", "Can modify 'shout' and 'interact' privileges")
 minetest.register_privilege("server", "Can do server maintenance stuff")
 minetest.register_privilege("shout", "Can speak in chat")
 minetest.register_privilege("ban", "Can ban and unban players")
-minetest.register_privilege("give", "Can use /give and /giveme")
 minetest.register_privilege("password", "Can use /setpassword and /clearpassword")
+minetest.register_privilege("teleport", {
+	description = "Can use /teleport command",
+	give_to_singleplayer = false,
+})
+minetest.register_privilege("bring", {
+	description = "Can teleport other players",
+	give_to_singleplayer = false,
+})
+minetest.register_privilege("settime", {
+	description = "Can use /time",
+	give_to_singleplayer = false,
+})
+minetest.register_privilege("give", {
+	description = "Can use /give and /giveme",
+	give_to_singleplayer = false,
+})
 minetest.register_privilege("fly", {
 	description = "Can fly using the free_move mode",
 	give_to_singleplayer = false,
@@ -48,5 +60,8 @@ minetest.register_privilege("noclip", {
 	description = "Can fly through walls",
 	give_to_singleplayer = false,
 })
-minetest.register_privilege("rollback", "Can use the rollback functionality")
+minetest.register_privilege("rollback", {
+	description = "Can use the rollback functionality",
+	give_to_singleplayer = false,
+})
 
