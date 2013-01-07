@@ -815,15 +815,15 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 					12/16.,0,16/16.,1};
 			makeCuboid(&collector, post, &tile_rot, 1, c, postuv);
 
-			// Now a section of fence, +X, if there's a post there
+			// Now a section of fence, +X, if there's a node
 			v3s16 p2 = p;
 			p2.X++;
 			MapNode n2 = data->m_vmanip.getNodeNoEx(blockpos_nodes + p2);
 			const ContentFeatures *f2 = &nodedef->get(n2);
-			if(f2->drawtype == NDT_FENCELIKE)
+			if(nodedef->get(n2).walkable)
 			{
 				aabb3f bar(-bar_len+BS/2,-bar_rad+BS/4,-bar_rad,
-						bar_len+BS/2,bar_rad+BS/4,bar_rad);
+						BS/2,bar_rad+BS/4,bar_rad);
 				bar.MinEdge += pos;
 				bar.MaxEdge += pos;
 				f32 xrailuv[24]={
@@ -841,15 +841,67 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 						c, xrailuv);
 			}
 
-			// Now a section of fence, +Z, if there's a post there
+			// Now a section of fence, -X, if there's a node
+			p2 = p;
+			p2.X--;
+			n2 = data->m_vmanip.getNodeNoEx(blockpos_nodes + p2);
+			f2 = &nodedef->get(n2);
+			if(nodedef->get(n2).walkable)
+			{
+				aabb3f bar(-BS/2,-bar_rad+BS/4,-bar_rad,
+						-bar_len+BS/2-post_rad,bar_rad+BS/4,bar_rad);
+				bar.MinEdge += pos;
+				bar.MaxEdge += pos;
+				f32 xrailuv[24]={
+					0/16.,2/16.,16/16.,4/16.,
+					0/16.,4/16.,16/16.,6/16.,
+					6/16.,6/16.,8/16.,8/16.,
+					10/16.,10/16.,12/16.,12/16.,
+					0/16.,8/16.,16/16.,10/16.,
+					0/16.,14/16.,16/16.,16/16.};
+				makeCuboid(&collector, bar, &tile_nocrack, 1,
+						c, xrailuv);
+				bar.MinEdge.Y -= BS/2;
+				bar.MaxEdge.Y -= BS/2;
+				makeCuboid(&collector, bar, &tile_nocrack, 1,
+						c, xrailuv);
+			}
+
+			// Now a section of fence, +Z, if there's a node
 			p2 = p;
 			p2.Z++;
 			n2 = data->m_vmanip.getNodeNoEx(blockpos_nodes + p2);
 			f2 = &nodedef->get(n2);
-			if(f2->drawtype == NDT_FENCELIKE)
+			if(nodedef->get(n2).walkable)
 			{
 				aabb3f bar(-bar_rad,-bar_rad+BS/4,-bar_len+BS/2,
-						bar_rad,bar_rad+BS/4,bar_len+BS/2);
+						bar_rad,bar_rad+BS/4,BS/2);
+				bar.MinEdge += pos;
+				bar.MaxEdge += pos;
+				f32 zrailuv[24]={
+					3/16.,1/16.,5/16.,5/16., // cannot rotate; stretch
+					4/16.,1/16.,6/16.,5/16., // for wood texture instead
+					0/16.,9/16.,16/16.,11/16.,
+					0/16.,6/16.,16/16.,8/16.,
+					6/16.,6/16.,8/16.,8/16.,
+					10/16.,10/16.,12/16.,12/16.};
+				makeCuboid(&collector, bar, &tile_nocrack, 1,
+						c, zrailuv);
+				bar.MinEdge.Y -= BS/2;
+				bar.MaxEdge.Y -= BS/2;
+				makeCuboid(&collector, bar, &tile_nocrack, 1,
+						c, zrailuv);
+			}
+
+			// Now a section of fence, -Z, if there's a node
+			p2 = p;
+			p2.Z--;
+			n2 = data->m_vmanip.getNodeNoEx(blockpos_nodes + p2);
+			f2 = &nodedef->get(n2);
+			if(nodedef->get(n2).walkable)
+			{
+				aabb3f bar(-bar_rad,-bar_rad+BS/4,-BS/2,
+						bar_rad,bar_rad+BS/4,-bar_len+BS/2-post_rad);
 				bar.MinEdge += pos;
 				bar.MaxEdge += pos;
 				f32 zrailuv[24]={
