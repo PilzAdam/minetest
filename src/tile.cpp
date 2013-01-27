@@ -1715,6 +1715,24 @@ bool generate_image(std::string part_of_name, video::IImage *& baseimg,
 			baseimg->drop();
 			baseimg = img;
 		}
+		/*
+			[color:R,G,B,A
+			Creates a plain color
+		*/
+		else if(part_of_name.substr(0,7) == "[color:")
+		{
+			Strfnd sf(part_of_name);
+			sf.next(":");
+			u16 r = stoi(sf.next(","));
+			u16 g = stoi(sf.next(","));
+			u16 b = stoi(sf.next(","));
+			u16 a = stoi(sf.next(","));
+
+			core::dimension2d<u32> dim(1,1);
+			baseimg = driver->createImage(video::ECF_A8R8G8B8, dim);
+			assert(baseimg);
+			baseimg->setPixel(0,0, video::SColor(a,r,g,b));
+		}
 		else
 		{
 			errorstream<<"generate_image(): Invalid "
