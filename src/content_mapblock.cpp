@@ -879,12 +879,12 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 				if(j == 0)
 				{
 					for(u16 i=0; i<4; i++)
-						vertices[i].Pos.rotateXZBy(45);
+						vertices[i].Pos.rotateXZBy(44);
 				}
 				else if(j == 1)
 				{
 					for(u16 i=0; i<4; i++)
-						vertices[i].Pos.rotateXZBy(-45);
+						vertices[i].Pos.rotateXZBy(-44);
 				}
 
 				for(u16 i=0; i<4; i++)
