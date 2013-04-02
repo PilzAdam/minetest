@@ -850,7 +850,7 @@ public:
 		
 		m_visuals_expired = false;
 
-		if(!m_prop.is_visible || m_is_local_player)
+		if(!m_prop.is_visible)
 			return;
 	
 		//video::IVideoDriver* driver = smgr->getVideoDriver();
@@ -1068,6 +1068,40 @@ public:
 
 	void step(float dtime, ClientEnvironment *env)
 	{
+		//HACK!!
+		if(m_is_local_player)
+		{
+			LocalPlayer *player = m_env->getLocalPlayer();
+			m_position = player->getPosition() + v3f(0,10,0);
+			m_velocity = v3f(0,0,0);
+			m_acceleration = v3f(0,0,0);
+			pos_translator.vect_show = m_position;
+			m_yaw = player->getYaw();
+			v3f offset(sin(m_yaw/180.*core::PI)*BS*0.5, 0, -cos(m_yaw/180.*core::PI)*BS*0.5);
+			m_position += offset;
+
+			PlayerControl controls = player->getPlayerControl();
+			bool walking = false;
+			if(controls.up || controls.down or controls.left || controls.right)
+				walking = true;
+
+			m_animation_speed = 30;
+
+			if(controls.sneak && walking)
+				m_animation_speed = 15;
+
+			//if(player->hp == 0)
+			//	m_animation_range = v2f(162, 166);
+			if(walking && (controls.LMB || controls.RMB))
+				m_animation_range = v2f(200, 219);
+			else if(walking)
+				m_animation_range = v2f(168, 187);
+			else if(controls.LMB || controls.RMB)
+				m_animation_range = v2f(189, 198);
+			else
+				m_animation_range = v2f(0, 79);
+		}
+
 		if(m_visuals_expired && m_smgr && m_irr){
 			m_visuals_expired = false;
 
@@ -1680,9 +1714,11 @@ public:
 		}
 		else if(cmd == GENERIC_CMD_SET_ANIMATION)
 		{
-			m_animation_range = readV2F1000(is);
-			m_animation_speed = readF1000(is);
-			m_animation_blend = readF1000(is);
+			if(!m_is_local_player){
+				m_animation_range = readV2F1000(is);
+				m_animation_speed = readF1000(is);
+				m_animation_blend = readF1000(is);
+			}
 
 			updateAnimation();
 		}
