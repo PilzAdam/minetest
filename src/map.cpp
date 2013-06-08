@@ -2044,6 +2044,7 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 		NodeNeighbor neutrals[6]; // nodes that are solid or another kind of liquid
 		int num_neutrals = 0;
 		bool flowing_down = false;
+		bool touching_ignore = false;
 		for (u16 i = 0; i < 6; i++) {
 			NeighborType nt = NEIGHBOR_SAME_LEVEL;
 			switch (i) {
@@ -2056,6 +2057,10 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 			}
 			v3s16 npos = p0 + dirs[i];
 			NodeNeighbor nb = {getNodeNoEx(npos), nt, npos};
+			if(nb.n.getContent() == CONTENT_IGNORE){
+				touching_ignore = true;
+				break;
+			}
 			switch (nodemgr->get(nb.n.getContent()).liquid_type) {
 				case LIQUID_NONE:
 					if (nb.n.getContent() == CONTENT_AIR) {
@@ -2099,6 +2104,8 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 					break;
 			}
 		}
+		if(touching_ignore)
+			continue;
 
 		/*
 			decide on the type (and possibly level) of the current node
