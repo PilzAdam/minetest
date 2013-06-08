@@ -1996,7 +1996,7 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 	while(m_transforming_liquid.size() != 0)
 	{
 		// This should be done here so that it is done when continue is used
-		if(loopcount >= initial_size || loopcount >= 10000)
+		if(loopcount >= initial_size || loopcount >= g_settings->getU16("liquid"))
 			break;
 		loopcount++;
 
