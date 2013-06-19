@@ -128,6 +128,13 @@ void read_object_properties(lua_State *L, int index,
 		prop->collisionbox = read_aabb3f(L, -1, 1.0);
 	lua_pop(L, 1);
 
+	lua_getfield(L, -1, "selection_box");
+	if(lua_istable(L, -1))
+		prop->selectionbox = read_aabb3f(L, -1, 1.0);
+	//else
+		//prop->selectionbox = prop->collisionbox;
+	lua_pop(L, 1);
+
 	getstringfield(L, -1, "visual", prop->visual);
 
 	getstringfield(L, -1, "mesh", prop->mesh);

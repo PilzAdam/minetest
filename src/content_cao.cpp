@@ -323,7 +323,7 @@ public:
 	void initialize(const std::string &data);
 	
 	core::aabbox3d<f32>* getSelectionBox()
-		{return &m_selection_box;}
+		{return &m_collision_box;}
 	v3f getPosition()
 		{return m_position;}
 	
@@ -332,7 +332,7 @@ public:
 
 	bool getCollisionBox(aabb3f *toset) { return false; }
 private:
-	core::aabbox3d<f32> m_selection_box;
+	core::aabbox3d<f32> m_collision_box;
 	scene::IMeshSceneNode *m_node;
 	v3f m_position;
 	std::string m_itemstring;
@@ -346,7 +346,7 @@ ItemCAO proto_ItemCAO(NULL, NULL);
 
 ItemCAO::ItemCAO(IGameDef *gamedef, ClientEnvironment *env):
 	ClientActiveObject(0, gamedef, env),
-	m_selection_box(-BS/3.,0.0,-BS/3., BS/3.,BS*2./3.,BS/3.),
+	m_collision_box(-BS/3.,0.0,-BS/3., BS/3.,BS*2./3.,BS/3.),
 	m_node(NULL),
 	m_position(v3f(0,10*BS,0))
 {
@@ -564,6 +564,7 @@ private:
 	//
 	scene::ISceneManager *m_smgr;
 	IrrlichtDevice *m_irr;
+	core::aabbox3d<f32> m_collision_box;
 	core::aabbox3d<f32> m_selection_box;
 	scene::IMeshSceneNode *m_meshnode;
 	scene::IAnimatedMeshSceneNode *m_animated_meshnode;
@@ -609,6 +610,7 @@ public:
 		//
 		m_smgr(NULL),
 		m_irr(NULL),
+		m_collision_box(-BS/3.,-BS/3.,-BS/3., BS/3.,BS/3.,BS/3.),
 		m_selection_box(-BS/3.,-BS/3.,-BS/3., BS/3.,BS/3.,BS/3.),
 		m_meshnode(NULL),
 		m_animated_meshnode(NULL),
@@ -1621,7 +1623,11 @@ public:
 		{
 			m_prop = gob_read_set_properties(is);
 
-			m_selection_box = m_prop.collisionbox;
+			m_collision_box = m_prop.collisionbox;
+			m_collision_box.MinEdge *= BS;
+			m_collision_box.MaxEdge *= BS;
+
+			m_selection_box = m_prop.selectionbox;
 			m_selection_box.MinEdge *= BS;
 			m_selection_box.MaxEdge *= BS;
 				

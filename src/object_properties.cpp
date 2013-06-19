@@ -31,6 +31,7 @@ ObjectProperties::ObjectProperties():
 	physical(false),
 	weight(5),
 	collisionbox(-0.5,-0.5,-0.5, 0.5,0.5,0.5),
+	selectionbox(-0.5,-0.5,-0.5, 0.5,0.5,0.5),
 	visual("sprite"),
 	mesh(""),
 	visual_size(1,1),
@@ -51,6 +52,7 @@ std::string ObjectProperties::dump()
 	os<<", physical="<<physical;
 	os<<", weight="<<weight;
 	os<<", collisionbox="<<PP(collisionbox.MinEdge)<<","<<PP(collisionbox.MaxEdge);
+	os<<", selectionbox="<<PP(selectionbox.MinEdge)<<","<<PP(selectionbox.MaxEdge);
 	os<<", visual="<<visual;
 	os<<", mesh="<<mesh;
 	os<<", visual_size="<<PP2(visual_size);
@@ -97,6 +99,8 @@ void ObjectProperties::serialize(std::ostream &os) const
 	for(u32 i=0; i<colors.size(); i++){
 		writeARGB8(os, colors[i]);
 	}
+	writeV3F1000(os, selectionbox.MinEdge);
+	writeV3F1000(os, selectionbox.MaxEdge);
 	// Add stuff only at the bottom.
 	// Never remove anything, because we don't want new versions of this
 }
@@ -129,6 +133,8 @@ void ObjectProperties::deSerialize(std::istream &is)
 			for(u32 i=0; i<color_count; i++){
 				colors.push_back(readARGB8(is));
 			}
+			selectionbox.MinEdge = readV3F1000(is);
+			selectionbox.MaxEdge = readV3F1000(is);
 		}catch(SerializationError &e){}
 	}
 	else
