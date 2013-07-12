@@ -2023,11 +2023,13 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 		 */
 		s8 liquid_level = -1;
 		content_t liquid_kind = CONTENT_IGNORE;
-		LiquidType liquid_type = nodemgr->get(n0).liquid_type;
+		content_t previous = CONTENT_AIR;
+		ContentFeatures cf = nodemgr->get(n0);
+		LiquidType liquid_type = cf.liquid_type;
 		switch (liquid_type) {
 			case LIQUID_SOURCE:
 				liquid_level = LIQUID_LEVEL_SOURCE;
-				liquid_kind = nodemgr->getId(nodemgr->get(n0).liquid_alternative_flowing);
+				liquid_kind = nodemgr->getId(cf.liquid_alternative_flowing);
 				break;
 			case LIQUID_FLOWING:
 				liquid_level = (n0.param2 & LIQUID_LEVEL_MASK);
@@ -2036,8 +2038,9 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 			case LIQUID_NONE:
 				// if this is an air node, it *could* be transformed into a liquid. otherwise,
 				// continue with the next node.
-				if (n0.getContent() != CONTENT_AIR)
+				if (n0.getContent() != CONTENT_AIR && !cf.buildable_to && cf.walkable)
 					continue;
+				previous = n0.getContent();
 				liquid_kind = CONTENT_AIR;
 				break;
 		}
@@ -2069,7 +2072,8 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 			NodeNeighbor nb = {getNodeNoEx(npos), nt, npos};
 			switch (nodemgr->get(nb.n.getContent()).liquid_type) {
 				case LIQUID_NONE:
-					if (nb.n.getContent() == CONTENT_AIR) {
+					if (nb.n.getContent() == CONTENT_AIR ||
+							nodemgr->get(nb.n).buildable_to || !nodemgr->get(nb.n).walkable) {
 						airs[num_airs++] = nb;
 						// if the current node is a water source the neighbor
 						// should be enqueded for transformation regardless of whether the
@@ -2169,7 +2173,7 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 			if (new_node_level >= 0)
 				new_node_content = liquid_kind;
 			else
-				new_node_content = CONTENT_AIR;
+				new_node_content = previous;
 
 		}
 
@@ -2196,6 +2200,11 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 			n0.param2 = ~(LIQUID_LEVEL_MASK | LIQUID_FLOW_DOWN_MASK);
 		}
 		n0.setContent(new_node_content);
+
+		if(previous != CONTENT_AIR && n0.getContent() != n00.getContent() &&
+				!cf.walkable){
+			// Drop n00 here
+		}
 
 		// Find out whether there is a suspect for this action
 		std::string suspect;
