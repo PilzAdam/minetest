@@ -1633,8 +1633,6 @@ struct TestConnection: public TestBase
 
 	void Run()
 	{
-		DSTACK("TestConnection::Run");
-
 		TestHelpers();
 
 		/*
@@ -1980,8 +1978,6 @@ struct TestConnection: public TestBase
 
 void run_tests()
 {
-	DSTACK(__FUNCTION_NAME);
-
 	int tests_run = 0;
 	int tests_failed = 0;
 	

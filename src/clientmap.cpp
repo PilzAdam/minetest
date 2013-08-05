@@ -70,7 +70,6 @@ ClientMap::~ClientMap()
 
 MapSector * ClientMap::emergeSector(v2s16 p2d)
 {
-	DSTACK(__FUNCTION_NAME);
 	// Check that it doesn't exist already
 	try{
 		return getSectorNoGenerate(p2d);
@@ -93,7 +92,6 @@ MapSector * ClientMap::emergeSector(v2s16 p2d)
 #if 0
 void ClientMap::deSerializeSector(v2s16 p2d, std::istream &is)
 {
-	DSTACK(__FUNCTION_NAME);
 	ClientMapSector *sector = NULL;
 
 	//JMutexAutoLock lock(m_sector_mutex); // Bulk comment-out
@@ -406,8 +404,6 @@ struct MeshBufListList
 
 void ClientMap::renderMap(video::IVideoDriver* driver, s32 pass)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	bool is_transparent_pass = pass == scene::ESNRP_TRANSPARENT;
 	
 	std::string prefix;

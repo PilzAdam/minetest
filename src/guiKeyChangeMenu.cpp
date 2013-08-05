@@ -413,5 +413,4 @@ void GUIKeyChangeMenu::init_keys()
 	this->add_key(GUI_ID_KEY_FAST_BUTTON,      wgettext("Toggle fast"),   "keymap_fastmove");
 	this->add_key(GUI_ID_KEY_NOCLIP_BUTTON,    wgettext("Toggle noclip"), "keymap_noclip");
 	this->add_key(GUI_ID_KEY_RANGE_BUTTON,     wgettext("Range select"),  "keymap_rangeselect");
-	this->add_key(GUI_ID_KEY_DUMP_BUTTON,      wgettext("Print stacks"),  "keymap_print_debug_stacks");
 }

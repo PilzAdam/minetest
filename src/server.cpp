@@ -74,8 +74,6 @@ void * ServerThread::Thread()
 
 	log_register_thread("ServerThread");
 
-	DSTACK(__FUNCTION_NAME);
-
 	BEGIN_DEBUG_EXCEPTION_HANDLER
 
 	while(getRun())
@@ -140,8 +138,6 @@ v3f ServerSoundParams::getPos(ServerEnvironment *env, bool *pos_exists) const
 void RemoteClient::GetNextBlocks(Server *server, float dtime,
 		std::vector<PrioritySortedBlockTransfer> &dest)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	/*u32 timer_result;
 	TimeTaker timer("RemoteClient::GetNextBlocks", &timer_result);*/
 
@@ -957,7 +953,6 @@ Server::~Server()
 
 void Server::start(unsigned short port)
 {
-	DSTACK(__FUNCTION_NAME);
 	infostream<<"Starting server on port "<<port<<"..."<<std::endl;
 
 	// Stop thread if already running
@@ -986,8 +981,6 @@ void Server::start(unsigned short port)
 
 void Server::stop()
 {
-	DSTACK(__FUNCTION_NAME);
-
 	infostream<<"Server: Stopping and waiting threads"<<std::endl;
 
 	// Stop threads (set run=false first so both start stopping)
@@ -1001,7 +994,6 @@ void Server::stop()
 
 void Server::step(float dtime)
 {
-	DSTACK(__FUNCTION_NAME);
 	// Limit a bit
 	if(dtime > 2.0)
 		dtime = 2.0;
@@ -1018,8 +1010,6 @@ void Server::step(float dtime)
 
 void Server::AsyncRunStep()
 {
-	DSTACK(__FUNCTION_NAME);
-
 	g_profiler->add("Server::AsyncRunStep (num)", 1);
 
 	float dtime;
@@ -1718,7 +1708,6 @@ void Server::AsyncRunStep()
 
 void Server::Receive()
 {
-	DSTACK(__FUNCTION_NAME);
 	SharedBuffer<u8> data;
 	u16 peer_id;
 	u32 datasize;
@@ -1759,7 +1748,6 @@ void Server::Receive()
 
 void Server::ProcessData(u8 *data, u32 datasize, u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
 	// Environment is locked first.
 	JMutexAutoLock envlock(m_env_mutex);
 	JMutexAutoLock conlock(m_con_mutex);
@@ -3280,8 +3268,7 @@ void Server::setInventoryModified(const InventoryLocation &loc)
 
 //std::list<PlayerInfo> Server::getPlayerInfo()
 //{
-//	DSTACK(__FUNCTION_NAME);
-//	JMutexAutoLock envlock(m_env_mutex);
+////	JMutexAutoLock envlock(m_env_mutex);
 //	JMutexAutoLock conlock(m_con_mutex);
 //
 //	std::list<PlayerInfo> list;
@@ -3322,7 +3309,6 @@ void Server::setInventoryModified(const InventoryLocation &loc)
 
 void Server::peerAdded(con::Peer *peer)
 {
-	DSTACK(__FUNCTION_NAME);
 	verbosestream<<"Server::peerAdded(): peer->id="
 			<<peer->id<<std::endl;
 
@@ -3335,7 +3321,6 @@ void Server::peerAdded(con::Peer *peer)
 
 void Server::deletingPeer(con::Peer *peer, bool timeout)
 {
-	DSTACK(__FUNCTION_NAME);
 	verbosestream<<"Server::deletingPeer(): peer->id="
 			<<peer->id<<", timeout="<<timeout<<std::endl;
 
@@ -3352,7 +3337,6 @@ void Server::deletingPeer(con::Peer *peer, bool timeout)
 
 void Server::SendMovement(con::Connection &con, u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOCLIENT_MOVEMENT);
@@ -3378,7 +3362,6 @@ void Server::SendMovement(con::Connection &con, u16 peer_id)
 
 void Server::SendHP(con::Connection &con, u16 peer_id, u8 hp)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOCLIENT_HP);
@@ -3393,7 +3376,6 @@ void Server::SendHP(con::Connection &con, u16 peer_id, u8 hp)
 
 void Server::SendBreath(con::Connection &con, u16 peer_id, u16 breath)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOCLIENT_BREATH);
@@ -3409,7 +3391,6 @@ void Server::SendBreath(con::Connection &con, u16 peer_id, u16 breath)
 void Server::SendAccessDenied(con::Connection &con, u16 peer_id,
 		const std::wstring &reason)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOCLIENT_ACCESS_DENIED);
@@ -3425,7 +3406,6 @@ void Server::SendAccessDenied(con::Connection &con, u16 peer_id,
 void Server::SendDeathscreen(con::Connection &con, u16 peer_id,
 		bool set_camera_point_target, v3f camera_point_target)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOCLIENT_DEATHSCREEN);
@@ -3442,7 +3422,6 @@ void Server::SendDeathscreen(con::Connection &con, u16 peer_id,
 void Server::SendItemDef(con::Connection &con, u16 peer_id,
 		IItemDefManager *itemdef, u16 protocol_version)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	/*
@@ -3469,7 +3448,6 @@ void Server::SendItemDef(con::Connection &con, u16 peer_id,
 void Server::SendNodeDef(con::Connection &con, u16 peer_id,
 		INodeDefManager *nodedef, u16 protocol_version)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	/*
@@ -3499,8 +3477,6 @@ void Server::SendNodeDef(con::Connection &con, u16 peer_id,
 
 void Server::SendInventory(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	PlayerSAO *playersao = getPlayerSAO(peer_id);
 	assert(playersao);
 
@@ -3525,8 +3501,6 @@ void Server::SendInventory(u16 peer_id)
 
 void Server::SendChatMessage(u16 peer_id, const std::wstring &message)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	std::ostringstream os(std::ios_base::binary);
 	u8 buf[12];
 
@@ -3556,8 +3530,6 @@ void Server::SendChatMessage(u16 peer_id, const std::wstring &message)
 void Server::SendShowFormspecMessage(u16 peer_id, const std::string formspec,
 					const std::string formname)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	std::ostringstream os(std::ios_base::binary);
 	u8 buf[12];
 
@@ -3579,8 +3551,6 @@ void Server::SendSpawnParticle(u16 peer_id, v3f pos, v3f velocity, v3f accelerat
 				float expirationtime, float size, bool collisiondetection,
 				std::string texture)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	std::ostringstream os(std::ios_base::binary);
 	writeU16(os, TOCLIENT_SPAWN_PARTICLE);
 	writeV3F1000(os, pos);
@@ -3623,8 +3593,6 @@ void Server::SendAddParticleSpawner(u16 peer_id, u16 amount, float spawntime, v3
 	v3f minvel, v3f maxvel, v3f minacc, v3f maxacc, float minexptime, float maxexptime,
 	float minsize, float maxsize, bool collisiondetection, std::string texture, u32 id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	std::ostringstream os(std::ios_base::binary);
 	writeU16(os, TOCLIENT_ADD_PARTICLESPAWNER);
 
@@ -3674,8 +3642,6 @@ void Server::SendAddParticleSpawnerAll(u16 amount, float spawntime, v3f minpos, 
 
 void Server::SendDeleteParticleSpawner(u16 peer_id, u32 id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	std::ostringstream os(std::ios_base::binary);
 	writeU16(os, TOCLIENT_DELETE_PARTICLESPAWNER);
 
@@ -3828,7 +3794,6 @@ void Server::BroadcastChatMessage(const std::wstring &message)
 
 void Server::SendPlayerHP(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
 	PlayerSAO *playersao = getPlayerSAO(peer_id);
 	assert(playersao);
 	playersao->m_hp_not_sent = false;
@@ -3837,7 +3802,6 @@ void Server::SendPlayerHP(u16 peer_id)
 
 void Server::SendPlayerBreath(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
 	PlayerSAO *playersao = getPlayerSAO(peer_id);
 	assert(playersao);
 	playersao->m_breath_not_sent = false;
@@ -3846,7 +3810,6 @@ void Server::SendPlayerBreath(u16 peer_id)
 
 void Server::SendMovePlayer(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
 	Player *player = m_env->getPlayer(peer_id);
 	assert(player);
 
@@ -4130,8 +4093,6 @@ void Server::setBlockNotSent(v3s16 p)
 
 void Server::SendBlockNoLock(u16 peer_id, MapBlock *block, u8 ver, u16 net_proto_version)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	v3s16 p = block->getPos();
 
 #if 0
@@ -4184,8 +4145,6 @@ void Server::SendBlockNoLock(u16 peer_id, MapBlock *block, u8 ver, u16 net_proto
 
 void Server::SendBlocks(float dtime)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	JMutexAutoLock envlock(m_env_mutex);
 	JMutexAutoLock conlock(m_con_mutex);
 
@@ -4259,8 +4218,6 @@ void Server::SendBlocks(float dtime)
 
 void Server::fillMediaCache()
 {
-	DSTACK(__FUNCTION_NAME);
-
 	infostream<<"Server: Calculating media file checksums"<<std::endl;
 
 	// Collect all media file paths
@@ -4367,8 +4324,6 @@ struct SendableMediaAnnouncement
 
 void Server::sendMediaAnnouncement(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	verbosestream<<"Server: Announcing files to id("<<peer_id<<")"
 			<<std::endl;
 
@@ -4431,8 +4386,6 @@ struct SendableMedia
 void Server::sendRequestedMedia(u16 peer_id,
 		const std::list<MediaRequest> &tosend)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	verbosestream<<"Server::sendRequestedMedia(): "
 			<<"Sending files to client"<<std::endl;
 
@@ -4565,8 +4518,6 @@ void Server::sendDetachedInventory(const std::string &name, u16 peer_id)
 
 void Server::sendDetachedInventoryToAll(const std::string &name)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	for(std::map<u16, RemoteClient*>::iterator
 			i = m_clients.begin();
 			i != m_clients.end(); ++i){
@@ -4577,8 +4528,6 @@ void Server::sendDetachedInventoryToAll(const std::string &name)
 
 void Server::sendDetachedInventories(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	for(std::map<std::string, Inventory*>::iterator
 			i = m_detached_inventories.begin();
 			i != m_detached_inventories.end(); i++){
@@ -4594,8 +4543,6 @@ void Server::sendDetachedInventories(u16 peer_id)
 
 void Server::DiePlayer(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	PlayerSAO *playersao = getPlayerSAO(peer_id);
 	assert(playersao);
 
@@ -4614,8 +4561,6 @@ void Server::DiePlayer(u16 peer_id)
 
 void Server::RespawnPlayer(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	PlayerSAO *playersao = getPlayerSAO(peer_id);
 	assert(playersao);
 
@@ -4634,8 +4579,6 @@ void Server::RespawnPlayer(u16 peer_id)
 
 void Server::DenyAccess(u16 peer_id, const std::wstring &reason)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	SendAccessDenied(m_con, peer_id, reason);
 
 	RemoteClient *client = getClientNoEx(peer_id);
@@ -4653,8 +4596,6 @@ void Server::DenyAccess(u16 peer_id, const std::wstring &reason)
 
 void Server::DeleteClient(u16 peer_id, ClientDeletionReason reason)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	// Error check
 	std::map<u16, RemoteClient*>::iterator n;
 	n = m_clients.find(peer_id);
@@ -4767,8 +4708,6 @@ void Server::DeleteClient(u16 peer_id, ClientDeletionReason reason)
 
 void Server::UpdateCrafting(u16 peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	Player* player = m_env->getPlayer(peer_id);
 	assert(player);
 
@@ -4790,8 +4729,10 @@ RemoteClient* Server::getClient(u16 peer_id)
 		throw ClientNotFoundException("Client not found");
 	return client;
 }
+
 RemoteClient* Server::getClientNoEx(u16 peer_id)
 {
+	//JMutexAutoLock lock(m_con_mutex);
 	std::map<u16, RemoteClient*>::iterator n;
 	n = m_clients.find(peer_id);
 	// The client may not exist; clients are immediately removed if their
@@ -5428,8 +5369,6 @@ void Server::handlePeerChanges()
 
 void dedicated_server_loop(Server &server, bool &kill)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	verbosestream<<"dedicated_server_loop()"<<std::endl;
 
 	IntervalLimiter m_profiler_interval;

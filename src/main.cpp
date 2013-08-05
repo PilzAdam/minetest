@@ -866,10 +866,6 @@ int main(int argc, char *argv[])
 	infostream<<"path_share = "<<porting::path_share<<std::endl;
 	infostream<<"path_user  = "<<porting::path_user<<std::endl;
 
-	// Initialize debug stacks
-	debug_stacks_init();
-	DSTACK(__FUNCTION_NAME);
-
 	// Debug handler
 	BEGIN_DEBUG_EXCEPTION_HANDLER
 	
@@ -1083,7 +1079,6 @@ int main(int argc, char *argv[])
 	g_settings->set("server_dedicated", run_dedicated_server ? "true" : "false");
 	if(run_dedicated_server)
 	{
-		DSTACK("Dedicated server branch");
 		// Create time getter if built with Irrlicht
 #ifndef SERVER
 		g_timegetter = new SimpleTimeGetter();

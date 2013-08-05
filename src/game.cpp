@@ -2065,17 +2065,6 @@ void the_game(
 			}
 		}
 
-		// Print debug stacks
-		if(input->wasKeyDown(getKeySetting("keymap_print_debug_stacks")))
-		{
-			dstream<<"-----------------------------------------"
-					<<std::endl;
-			dstream<<DTIME<<"Printing debug stacks:"<<std::endl;
-			dstream<<"-----------------------------------------"
-					<<std::endl;
-			debug_stacks_print();
-		}
-
 		/*
 			Mouse and camera control
 			NOTE: Do this before client.setPlayerControl() to not cause a camera lag of one frame

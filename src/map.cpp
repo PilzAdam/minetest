@@ -210,7 +210,6 @@ void Map::setNode(v3s16 p, MapNode & n)
 				<<" while trying to replace \""
 				<<m_gamedef->ndef()->get(block->getNodeNoCheck(relpos)).name
 				<<"\" at "<<PP(p)<<" (block "<<PP(blockpos)<<")"<<std::endl;
-		debug_stacks_print_to(infostream);
 		return;
 	}
 	block->setNodeNoCheck(relpos, n);
@@ -1639,7 +1638,6 @@ void Map::transformLiquidsFinite(std::map<v3s16, MapBlock*> & modified_blocks)
 {
 	INodeDefManager *nodemgr = m_gamedef->ndef();
 
-	DSTACK(__FUNCTION_NAME);
 	//TimeTaker timer("transformLiquids()");
 
 	u32 loopcount = 0;
@@ -1998,7 +1996,6 @@ void Map::transformLiquids(std::map<v3s16, MapBlock*> & modified_blocks)
 
 	INodeDefManager *nodemgr = m_gamedef->ndef();
 
-	DSTACK(__FUNCTION_NAME);
 	//TimeTaker timer("transformLiquids()");
 
 	u32 loopcount = 0;
@@ -2834,10 +2831,6 @@ MapBlock* ServerMap::finishBlockMake(BlockMakeData *data,
 
 ServerMapSector * ServerMap::createSector(v2s16 p2d)
 {
-	DSTACKF("%s: p2d=(%d,%d)",
-			__FUNCTION_NAME,
-			p2d.X, p2d.Y);
-
 	/*
 		Check if it exists already in memory
 	*/
@@ -2900,8 +2893,6 @@ MapBlock * ServerMap::generateBlock(
 		std::map<v3s16, MapBlock*> &modified_blocks
 )
 {
-	DSTACKF("%s: p=(%d,%d,%d)", __FUNCTION_NAME, p.X, p.Y, p.Z);
-
 	/*infostream<<"generateBlock(): "
 			<<"("<<p.X<<","<<p.Y<<","<<p.Z<<")"
 			<<std::endl;*/
@@ -3009,9 +3000,6 @@ MapBlock * ServerMap::generateBlock(
 
 MapBlock * ServerMap::createBlock(v3s16 p)
 {
-	DSTACKF("%s: p=(%d,%d,%d)",
-			__FUNCTION_NAME, p.X, p.Y, p.Z);
-
 	/*
 		Do not create over-limit
 	*/
@@ -3073,10 +3061,6 @@ MapBlock * ServerMap::createBlock(v3s16 p)
 
 MapBlock * ServerMap::emergeBlock(v3s16 p, bool create_blank)
 {
-	DSTACKF("%s: p=(%d,%d,%d), create_blank=%d",
-			__FUNCTION_NAME,
-			p.X, p.Y, p.Z, create_blank);
-
 	{
 		MapBlock *block = getBlockNoCreateNoEx(p);
 		if(block && block->isDummy() == false)
@@ -3326,7 +3310,6 @@ std::string ServerMap::getBlockFilename(v3s16 p)
 
 void ServerMap::save(ModifiedState save_level)
 {
-	DSTACK(__FUNCTION_NAME);
 	if(m_map_saving_enabled == false)
 	{
 		infostream<<"WARNING: Not saving map, saving disabled."<<std::endl;
@@ -3482,8 +3465,6 @@ void ServerMap::listAllLoadedBlocks(std::list<v3s16> &dst)
 
 void ServerMap::saveMapMeta()
 {
-	DSTACK(__FUNCTION_NAME);
-
 	/*infostream<<"ServerMap::saveMapMeta(): "
 			<<"seed="<<m_seed
 			<<std::endl;*/
@@ -3511,8 +3492,6 @@ void ServerMap::saveMapMeta()
 
 void ServerMap::loadMapMeta()
 {
-	DSTACK(__FUNCTION_NAME);
-
 	/*infostream<<"ServerMap::loadMapMeta(): Loading map metadata"
 			<<std::endl;*/
 
@@ -3566,7 +3545,6 @@ void ServerMap::loadMapMeta()
 
 void ServerMap::saveSectorMeta(ServerMapSector *sector)
 {
-	DSTACK(__FUNCTION_NAME);
 	// Format used for writing
 	u8 version = SER_FMT_VER_HIGHEST_WRITE;
 	// Get destination
@@ -3586,7 +3564,6 @@ void ServerMap::saveSectorMeta(ServerMapSector *sector)
 
 MapSector* ServerMap::loadSectorMeta(std::string sectordir, bool save_after_load)
 {
-	DSTACK(__FUNCTION_NAME);
 	// Get destination
 	v2s16 p2d = getSectorPos(sectordir);
 
@@ -3627,8 +3604,6 @@ MapSector* ServerMap::loadSectorMeta(std::string sectordir, bool save_after_load
 
 bool ServerMap::loadSectorMeta(v2s16 p2d)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	MapSector *sector = NULL;
 
 	// The directory layout we're going to load from.
@@ -3671,8 +3646,6 @@ bool ServerMap::loadSectorMeta(v2s16 p2d)
 #if 0
 bool ServerMap::loadSectorFull(v2s16 p2d)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	MapSector *sector = NULL;
 
 	// The directory layout we're going to load from.
@@ -3754,7 +3727,6 @@ void ServerMap::endSave() {
 
 void ServerMap::saveBlock(MapBlock *block)
 {
-	DSTACK(__FUNCTION_NAME);
 	/*
 		Dummy blocks are not written
 	*/
@@ -3827,8 +3799,6 @@ void ServerMap::saveBlock(MapBlock *block)
 
 void ServerMap::loadBlock(std::string sectordir, std::string blockfile, MapSector *sector, bool save_after_load)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	std::string fullpath = sectordir+DIR_DELIM+blockfile;
 	try{
 
@@ -3903,8 +3873,6 @@ void ServerMap::loadBlock(std::string sectordir, std::string blockfile, MapSecto
 
 void ServerMap::loadBlock(std::string *blob, v3s16 p3d, MapSector *sector, bool save_after_load)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	try {
 		std::istringstream is(*blob, std::ios_base::binary);
 
@@ -3972,8 +3940,6 @@ void ServerMap::loadBlock(std::string *blob, v3s16 p3d, MapSector *sector, bool 
 
 MapBlock* ServerMap::loadBlock(v3s16 blockpos)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	v2s16 p2d(blockpos.X, blockpos.Z);
 
 	if(!loadFromFolders()) {

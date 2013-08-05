@@ -763,8 +763,6 @@ void ICraftAction::clientApply(InventoryManager *mgr, IGameDef *gamedef)
 bool getCraftingResult(Inventory *inv, ItemStack& result,
 		bool decrementInput, IGameDef *gamedef)
 {
-	DSTACK(__FUNCTION_NAME);
-	
 	result.clear();
 
 	// Get the InventoryList in which we will operate

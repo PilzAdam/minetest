@@ -56,7 +56,6 @@
 # If false aux1 is used to fly fast
 #always_fly_fast = true
 # Some (temporary) keys for debugging
-#keymap_print_debug_stacks = KEY_KEY_P
 #keymap_quicktune_prev = KEY_HOME
 #keymap_quicktune_next = KEY_END
 #keymap_quicktune_dec = KEY_NEXT

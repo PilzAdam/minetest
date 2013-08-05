@@ -101,8 +101,6 @@ MeshUpdateQueue::~MeshUpdateQueue()
 */
 void MeshUpdateQueue::addBlock(v3s16 p, MeshMakeData *data, bool ack_block_to_server, bool urgent)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	assert(data);
 
 	JMutexAutoLock lock(m_mutex);
@@ -171,7 +169,6 @@ void * MeshUpdateThread::Thread()
 
 	log_register_thread("MeshUpdateThread");
 
-	DSTACK(__FUNCTION_NAME);
 	
 	BEGIN_DEBUG_EXCEPTION_HANDLER
 
@@ -226,8 +223,6 @@ void * MediaFetchThread::Thread()
 	ThreadStarted();
 
 	log_register_thread("MediaFetchThread");
-
-	DSTACK(__FUNCTION_NAME);
 
 	BEGIN_DEBUG_EXCEPTION_HANDLER
 
@@ -378,7 +373,6 @@ Client::~Client()
 
 void Client::connect(Address address)
 {
-	DSTACK(__FUNCTION_NAME);
 	//JMutexAutoLock lock(m_con_mutex); //bulk comment-out
 	m_con.SetTimeoutMs(0);
 	m_con.Connect(address);
@@ -399,7 +393,6 @@ bool Client::connectedAndInitialized()
 
 void Client::step(float dtime)
 {
-	DSTACK(__FUNCTION_NAME);
 	
 	// Limit a bit
 	if(dtime > 2.0)
@@ -1068,7 +1061,6 @@ void Client::request_media(const std::list<MediaRequest> &file_requests)
 
 void Client::ReceiveAll()
 {
-	DSTACK(__FUNCTION_NAME);
 	u32 start_ms = porting::getTimeMs();
 	for(;;)
 	{
@@ -1096,7 +1088,6 @@ void Client::ReceiveAll()
 
 void Client::Receive()
 {
-	DSTACK(__FUNCTION_NAME);
 	SharedBuffer<u8> data;
 	u16 sender_peer_id;
 	u32 datasize;
@@ -1114,8 +1105,6 @@ void Client::Receive()
 */
 void Client::ProcessData(u8 *data, u32 datasize, u16 sender_peer_id)
 {
-	DSTACK(__FUNCTION_NAME);
-
 	// Ignore packets that don't even fit a command
 	if(datasize < 2)
 	{
@@ -2361,7 +2350,6 @@ void Client::sendChangePassword(const std::wstring oldpassword,
 
 void Client::sendDamage(u8 damage)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOSERVER_DAMAGE);
@@ -2376,7 +2364,6 @@ void Client::sendDamage(u8 damage)
 
 void Client::sendBreath(u16 breath)
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOSERVER_BREATH);
@@ -2390,7 +2377,6 @@ void Client::sendBreath(u16 breath)
 
 void Client::sendRespawn()
 {
-	DSTACK(__FUNCTION_NAME);
 	std::ostringstream os(std::ios_base::binary);
 
 	writeU16(os, TOSERVER_RESPAWN);

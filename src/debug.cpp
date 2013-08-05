@@ -71,162 +71,11 @@ void assert_fail(const char *assertion, const char *file,
 			(unsigned long)get_current_thread_id(),
 			file, line, function, assertion);
 	
-	debug_stacks_print();
-
 	if(g_debugstreams[1])
 		fclose(g_debugstreams[1]);
 
 	abort();
 }
-
-/*
-	DebugStack
-*/
-
-DebugStack::DebugStack(threadid_t id)
-{
-	threadid = id;
-	stack_i = 0;
-	stack_max_i = 0;
-	memset(stack, 0, DEBUG_STACK_SIZE*DEBUG_STACK_TEXT_SIZE);
-}
-
-void DebugStack::print(FILE *file, bool everything)
-{
-	fprintf(file, "DEBUG STACK FOR THREAD %lx:\n",
-			(unsigned long)threadid);
-
-	for(int i=0; i<stack_max_i; i++)
-	{
-		if(i == stack_i && everything == false)
-			break;
-
-		if(i < stack_i)
-			fprintf(file, "#%d  %s\n", i, stack[i]);
-		else
-			fprintf(file, "(Leftover data: #%d  %s)\n", i, stack[i]);
-	}
-
-	if(stack_i == DEBUG_STACK_SIZE)
-		fprintf(file, "Probably overflown.\n");
-}
-
-void DebugStack::print(std::ostream &os, bool everything)
-{
-	os<<"DEBUG STACK FOR THREAD "<<(unsigned long)threadid<<": "<<std::endl;
-
-	for(int i=0; i<stack_max_i; i++)
-	{
-		if(i == stack_i && everything == false)
-			break;
-
-		if(i < stack_i)
-			os<<"#"<<i<<"  "<<stack[i]<<std::endl;
-		else
-			os<<"(Leftover data: #"<<i<<"  "<<stack[i]<<")"<<std::endl;
-	}
-
-	if(stack_i == DEBUG_STACK_SIZE)
-		os<<"Probably overflown."<<std::endl;
-}
-
-std::map<threadid_t, DebugStack*> g_debug_stacks;
-JMutex g_debug_stacks_mutex;
-
-void debug_stacks_init()
-{
-	g_debug_stacks_mutex.Init();
-}
-
-void debug_stacks_print_to(std::ostream &os)
-{
-	JMutexAutoLock lock(g_debug_stacks_mutex);
-
-	os<<"Debug stacks:"<<std::endl;
-
-	for(std::map<threadid_t, DebugStack*>::iterator
-			i = g_debug_stacks.begin();
-			i != g_debug_stacks.end(); ++i)
-	{
-		i->second->print(os, false);
-	}
-}
-
-void debug_stacks_print()
-{
-	JMutexAutoLock lock(g_debug_stacks_mutex);
-
-	DEBUGPRINT("Debug stacks:\n");
-
-	for(std::map<threadid_t, DebugStack*>::iterator
-			i = g_debug_stacks.begin();
-			i != g_debug_stacks.end(); ++i)
-	{
-		DebugStack *stack = i->second;
-
-		for(int i=0; i<DEBUGSTREAM_COUNT; i++)
-		{
-			if(g_debugstreams[i] != NULL)
-				stack->print(g_debugstreams[i], true);
-		}
-	}
-}
-
-DebugStacker::DebugStacker(const char *text)
-{
-	threadid_t threadid = get_current_thread_id();
-
-	JMutexAutoLock lock(g_debug_stacks_mutex);
-
-	std::map<threadid_t, DebugStack*>::iterator n;
-	n = g_debug_stacks.find(threadid);
-	if(n != g_debug_stacks.end())
-	{
-		m_stack = n->second;
-	}
-	else
-	{
-		/*DEBUGPRINT("Creating new debug stack for thread %x\n",
-				(unsigned int)threadid);*/
-		m_stack = new DebugStack(threadid);
-		g_debug_stacks[threadid] = m_stack;
-	}
-
-	if(m_stack->stack_i >= DEBUG_STACK_SIZE)
-	{
-		m_overflowed = true;
-	}
-	else
-	{
-		m_overflowed = false;
-
-		snprintf(m_stack->stack[m_stack->stack_i],
-				DEBUG_STACK_TEXT_SIZE, "%s", text);
-		m_stack->stack_i++;
-		if(m_stack->stack_i > m_stack->stack_max_i)
-			m_stack->stack_max_i = m_stack->stack_i;
-	}
-}
-
-DebugStacker::~DebugStacker()
-{
-	JMutexAutoLock lock(g_debug_stacks_mutex);
-	
-	if(m_overflowed == true)
-		return;
-	
-	m_stack->stack_i--;
-
-	if(m_stack->stack_i == 0)
-	{
-		threadid_t threadid = m_stack->threadid;
-		/*DEBUGPRINT("Deleting debug stack for thread %x\n",
-				(unsigned int)threadid);*/
-		delete m_stack;
-		g_debug_stacks.erase(threadid);
-	}
-}
-
 
 #ifdef _MSC_VER
 #if CATCH_UNHANDLED_EXCEPTIONS == 1
@@ -256,6 +105,4 @@ void se_trans_func(unsigned int u, EXCEPTION_POINTERS* pExp)
 }
 #endif
 #endif
-
-
 
