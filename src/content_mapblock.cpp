@@ -688,6 +688,163 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 				collector.append(tile_liquid, vertices, 4, indices, 6);
 			}
 		break;}
+		case NDT_FINITE_LIQUID:
+		{
+			/*
+				Add water sources to mesh if using new style
+			*/
+			TileSpec tile = f.special_tiles[0];
+			TileSpec tile_bfculled = f.special_tiles[1];
+
+			bool top_is_same_liquid = false;
+			MapNode ntop = data->m_vmanip.getNodeNoEx(blockpos_nodes + v3s16(x,y+1,z));
+			if(ntop.getContent() == n.getContent())
+				top_is_same_liquid = true;
+
+			u16 l = getInteriorLight(n, 0, data);
+			video::SColor c = MapBlock_LightColor(f.alpha, l, decode_light(f.light_source));
+
+			float level = n.param2 / 255.;
+
+			/*
+				Generate sides
+			 */
+			v3s16 side_dirs[4] = {
+				v3s16(1,0,0),
+				v3s16(-1,0,0),
+				v3s16(0,0,1),
+				v3s16(0,0,-1),
+			};
+			for(u32 i=0; i<4; i++)
+			{
+				v3s16 dir = side_dirs[i];
+
+				MapNode neighbor = data->m_vmanip.getNodeNoEx(blockpos_nodes + p + dir);
+				content_t neighbor_content = neighbor.getContent();
+				const ContentFeatures &n_feat = nodedef->get(neighbor_content);
+				MapNode n_top = data->m_vmanip.getNodeNoEx(blockpos_nodes + p + dir+ v3s16(0,1,0));
+				content_t n_top_c = n_top.getContent();
+
+				if(neighbor_content == CONTENT_IGNORE)
+					continue;
+
+				/*
+					If our topside is liquid and neighbor's topside
+					is liquid, don't draw side face
+				*/
+				if(top_is_same_liquid && (n_top_c == n.getContent() || n_top_c == CONTENT_IGNORE))
+					continue;
+
+				// Don't draw face if neighbor is blocking the view
+				if(n_feat.solidness == 2)
+					continue;
+
+				bool neighbor_is_same_liquid = neighbor_content == n.getContent();
+
+				// Don't draw any faces if neighbor same is liquid and top is
+				// same liquid
+				if(neighbor_is_same_liquid && !top_is_same_liquid)
+					continue;
+
+				// Use backface culled material if neighbor doesn't have a
+				// solidness of 0
+				const TileSpec *current_tile = &tile;
+				if(n_feat.solidness != 0 || n_feat.visual_solidness != 0)
+					current_tile = &tile_bfculled;
+
+				video::S3DVertex vertices[4] =
+				{
+					video::S3DVertex(-BS/2,0,BS/2,0,0,0, c, 0,1),
+					video::S3DVertex(BS/2,0,BS/2,0,0,0, c, 1,1),
+					video::S3DVertex(BS/2,0,BS/2, 0,0,0, c, 1,0),
+					video::S3DVertex(-BS/2,0,BS/2, 0,0,0, c, 0,0),
+				};
+
+				/*
+					If our topside is liquid, set upper border of face
+					at upper border of node
+				*/
+				if(top_is_same_liquid)
+				{
+					vertices[2].Pos.Y = 0.5*BS;
+					vertices[3].Pos.Y = 0.5*BS;
+				}
+				/*
+					Otherwise upper position of face is liquid level
+				*/
+				else
+				{
+					vertices[2].Pos.Y = (level-0.5)*BS;
+					vertices[3].Pos.Y = (level-0.5)*BS;
+				}
+				/*
+					If neighbor is liquid, lower border of face is liquid level
+				*/
+				if(neighbor_is_same_liquid)
+				{
+					vertices[0].Pos.Y = (level-0.5)*BS;
+					vertices[1].Pos.Y = (level-0.5)*BS;
+				}
+				/*
+					If neighbor is not liquid, lower border of face is
+					lower border of node
+				*/
+				else
+				{
+					vertices[0].Pos.Y = -0.5*BS;
+					vertices[1].Pos.Y = -0.5*BS;
+				}
+
+				for(s32 j=0; j<4; j++)
+				{
+					if(dir == v3s16(0,0,1))
+						vertices[j].Pos.rotateXZBy(0);
+					if(dir == v3s16(0,0,-1))
+						vertices[j].Pos.rotateXZBy(180);
+					if(dir == v3s16(-1,0,0))
+						vertices[j].Pos.rotateXZBy(90);
+					if(dir == v3s16(1,0,-0))
+						vertices[j].Pos.rotateXZBy(-90);
+
+					// Do this to not cause glitches when two liquids are
+					// side-by-side
+					/*if(neighbor_is_same_liquid == false){
+						vertices[j].Pos.X *= 0.98;
+						vertices[j].Pos.Z *= 0.98;
+					}*/
+
+					vertices[j].Pos += intToFloat(p, BS);
+				}
+
+				u16 indices[] = {0,1,2,2,3,0};
+				// Add to mesh collector
+				collector.append(*current_tile, vertices, 4, indices, 6);
+			}
+
+			/*
+				Generate top
+			 */
+			if(top_is_same_liquid)
+				continue;
+			
+			video::S3DVertex vertices[4] =
+			{
+				video::S3DVertex(-BS/2,0,BS/2, 0,0,0, c, 0,1),
+				video::S3DVertex(BS/2,0,BS/2, 0,0,0, c, 1,1),
+				video::S3DVertex(BS/2,0,-BS/2, 0,0,0, c, 1,0),
+				video::S3DVertex(-BS/2,0,-BS/2, 0,0,0, c, 0,0),
+			};
+
+			v3f offset(p.X*BS, p.Y*BS + (-0.5+level)*BS, p.Z*BS);
+			for(s32 i=0; i<4; i++)
+			{
+				vertices[i].Pos += offset;
+			}
+
+			u16 indices[] = {0,1,2,2,3,0};
+			// Add to mesh collector
+			collector.append(tile, vertices, 4, indices, 6);
+		break;}
 		case NDT_GLASSLIKE:
 		{
 			TileSpec tile = getNodeTile(n, p, v3s16(0,0,0), data);

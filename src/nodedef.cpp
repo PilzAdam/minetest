@@ -644,6 +644,12 @@ public:
 					f->alpha = 255;
 				is_liquid = true;
 				break;
+			case NDT_FINITE_LIQUID:
+				f->solidness = 0;
+				if(opaque_water)
+					f->alpha = 255;
+				is_liquid = true;
+				break;
 			case NDT_GLASSLIKE:
 				f->solidness = 0;
 				f->visual_solidness = 1;

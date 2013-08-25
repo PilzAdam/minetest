@@ -102,11 +102,11 @@ enum Rotation {
 #define LIQUID_LEVEL_MAX LIQUID_LEVEL_MASK
 #define LIQUID_LEVEL_SOURCE (LIQUID_LEVEL_MAX+1)
 
-#define LIQUID_INFINITY_MASK 0x80 //0b10000000
-
 // mask for param2, now as for liquid
 #define LEVELED_MASK 0x3F
 #define LEVELED_MAX LEVELED_MASK
+
+#define FINITE_LIQUID_LEVEL_MAX 255
 
 /*
 	This is the stuff what the whole world consists of.

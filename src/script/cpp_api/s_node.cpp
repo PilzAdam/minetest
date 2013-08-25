@@ -32,6 +32,7 @@ struct EnumString ScriptApiNode::es_DrawType[] =
 		{NDT_AIRLIKE, "airlike"},
 		{NDT_LIQUID, "liquid"},
 		{NDT_FLOWINGLIQUID, "flowingliquid"},
+		{NDT_FINITE_LIQUID, "finite_liquid"},
 		{NDT_GLASSLIKE, "glasslike"},
 		{NDT_GLASSLIKE_FRAMED, "glasslike_framed"},
 		{NDT_ALLFACES, "allfaces"},
@@ -61,6 +62,7 @@ struct EnumString ScriptApiNode::es_LiquidType[] =
 		{LIQUID_NONE, "none"},
 		{LIQUID_FLOWING, "flowing"},
 		{LIQUID_SOURCE, "source"},
+		{LIQUID_FINITE, "finite"},
 		{0, NULL},
 	};
 
