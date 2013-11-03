@@ -839,6 +839,8 @@ public:
 		services->setPixelShaderConstant("useNormalmap" , (irr::s32*)&layer2, 1);
 		services->setPixelShaderConstant("normalSampler" , (irr::s32*)&layer3, 1);
 #endif
+		float timeofday = m_client->getEnv().getTimeOfDayF();
+		services->setPixelShaderConstant("time", &timeofday, 1);
 	}
 };
 
