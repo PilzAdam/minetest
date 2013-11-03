@@ -4,7 +4,7 @@ uniform mat4 mInvWorld;
 uniform mat4 mTransWorld;
 uniform float dayNightRatio;
 uniform vec3 eyePosition;
-uniform float time;
+uniform float timeOfDay;
 
 varying vec3 vPosition;
 varying vec3 viewVec;
@@ -29,8 +29,8 @@ void main(void)
 	
 	vec4 pos2 = gl_Vertex;
 	pos2.y -= 3.0;
-	pos2.y -= sin (pos2.z/wavelength + time * wavespeed * wavelength) * waveheight
-		+ sin ((pos2.z/wavelength + time * wavespeed * wavelength)/7) * waveheight * height_randomness;
+	pos2.y -= sin (pos2.z/wavelength + timeOfDay * wavespeed * wavelength) * waveheight
+		+ sin ((pos2.z/wavelength + timeOfDay * wavespeed * wavelength)/7) * waveheight * height_randomness;
 	
 	gl_Position = mWorldViewProj * pos2;
 
