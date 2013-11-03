@@ -6,6 +6,11 @@ uniform float dayNightRatio;
 uniform vec3 eyePosition;
 uniform float timeOfDay;
 
+uniform float enableWaterWave;
+uniform float waterWaveHeight;
+uniform float waterWaveSpeed;
+uniform float waterWaveLength;
+
 varying vec3 vPosition;
 varying vec3 viewVec;
 varying vec3 T,B,N;
@@ -22,18 +27,19 @@ float rand(vec2 co)
 
 void main(void)
 {
-	int wavelength = 20;
-	float waveheight = 1.7;
-	int wavespeed = 100;
-	int height_randomness = 1;
-	
-	vec4 pos2 = gl_Vertex;
-	pos2.y -= 3.0;
-	pos2.y -= sin (pos2.z/wavelength + timeOfDay * wavespeed * wavelength) * waveheight
-		+ sin ((pos2.z/wavelength + timeOfDay * wavespeed * wavelength)/7) * waveheight * height_randomness;
-	
-	gl_Position = mWorldViewProj * pos2;
-
+	gl_Position = mWorldViewProj * gl_Vertex;
+	if (enableWaterWave == 1)
+	{
+		int wavelength = 20;
+		float waveheight = 0.4;
+		int wavespeed = 50;
+		int height_randomness = 1;
+		vec4 pos2 = gl_Vertex;
+		pos2.y -= 3.0;
+		pos2.y -= sin (pos2.z/waterWaveLength + timeOfDay * waterWaveSpeed * waterWaveLength) * waterWaveHeight
+			+ sin ((pos2.z/waterWaveLength + timeOfDay * waterWaveSpeed * waterWaveLength)/7) * waterWaveHeight * height_randomness;
+		gl_Position = mWorldViewProj * pos2;
+	}
 	vPosition = (mWorldViewProj * gl_Vertex).xyz;
 	vec3 pos = vec3(gl_Vertex);
 
