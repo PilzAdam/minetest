@@ -6,11 +6,6 @@ uniform float dayNightRatio;
 uniform vec3 eyePosition;
 uniform float timeOfDay;
 
-uniform float enableWaterWave;
-uniform float waterWaveHeight;
-uniform float waterWaveSpeed;
-uniform float waterWaveLength;
-
 varying vec3 vPosition;
 varying vec3 viewVec;
 varying vec3 T,B,N;
@@ -27,16 +22,18 @@ float rand(vec2 co)
 
 void main(void)
 {
-	gl_Position = mWorldViewProj * gl_Vertex;
-	if (enableWaterWave == 1.0)
-	{
-		float height_randomness = 1.0;
-		vec4 pos2 = gl_Vertex;
-		pos2.y -= 3.0;
-		pos2.y -= sin (pos2.z/waterWaveLength + timeOfDay * waterWaveSpeed * waterWaveLength) * waterWaveHeight
-			+ sin ((pos2.z/waterWaveLength + timeOfDay * waterWaveSpeed * waterWaveLength)/7) * waterWaveHeight * height_randomness;
-		gl_Position = mWorldViewProj * pos2;
-	}
+	int wavelength = 20;
+	float waveheight = 1.0;
+	int wavespeed = 50;
+	int height_randomness = 1;
+	
+	vec4 pos2 = gl_Vertex;
+	pos2.y -= 3.0;
+	pos2.y -= sin (pos2.z/wavelength + timeOfDay * wavespeed * wavelength) * waveheight
+		+ sin ((pos2.z/wavelength + timeOfDay * wavespeed * wavelength)/7) * waveheight * height_randomness;
+	
+	gl_Position = mWorldViewProj * pos2;
+
 	vPosition = (mWorldViewProj * gl_Vertex).xyz;
 	vec3 pos = vec3(gl_Vertex);
 
@@ -52,7 +49,7 @@ void main(void)
 	worldPos = vec3(mTransWorld * gl_Vertex);
 	fragPos = ftransform();
 	viewPos = pos - gl_ModelViewMatrixInverse[3].xyz;
-	//cameraPos = eyePosition;
+	cameraPos = eyePosition;
 
 	vec4 color;
 	//color = vec4(1.0, 1.0, 1.0, 1.0);
